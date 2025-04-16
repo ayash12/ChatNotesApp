@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "311652185092",
+    "project_id": "chatnotes-d8fa5",
+    "storage_bucket": "chatnotes-d8fa5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311652185092:android:76e81b39a10c0c4289b151",
+        "android_client_info": {
+          "package_name": "com.chatnotesapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwDtSoMUmF7t-i0JUasCDT4qLmwgHA9PY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
