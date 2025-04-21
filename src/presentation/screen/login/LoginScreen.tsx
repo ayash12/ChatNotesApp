@@ -1,20 +1,15 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {View, Text, TextInput, Button, StyleSheet, Alert, Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../navigation/AppNavigator';
 import {LoginViewModel} from './LoginViewModel';
 
 const LoginScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const onLogin = async () => {
     try {
       await LoginViewModel.login(email, password);
-      navigation.replace('Home');
     } catch (error) {
       Alert.alert('Login Failed', 'Please check your credentials.');
     }
