@@ -1,14 +1,31 @@
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View, TextInput, Button, StyleSheet} from 'react-native';
-import {useNoteFormViewModel} from './NoteFormViewModel';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/AppNavigator';
+import { useNoteFormViewModel } from '../notes/NoteFormViewModel';
 
-const NoteFormScreen = ({route, navigation}: any) => {
-  const existingNote = route.params?.note;
-  const {title, setTitle, content, setContent, onSave} =
-    useNoteFormViewModel(existingNote);
+type Props = NativeStackScreenProps<RootStackParamList, 'NoteForm'>;
+
+const NoteFormScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute<Props['route']>();
+  const existingNote = route.params?.note; // langsung ambil objek note
+
+  const {
+    title,
+    setTitle,
+    content,
+    setContent,
+    onSave,
+  } = useNoteFormViewModel(existingNote);
 
   const handleSave = async () => {
+    if (!title.trim() || !content.trim()) {
+      Alert.alert('Validation', 'Title and Content cannot be empty!');
+      return;
+    }
+
     await onSave();
     navigation.goBack();
   };
@@ -16,19 +33,23 @@ const NoteFormScreen = ({route, navigation}: any) => {
   return (
     <View style={styles.container}>
       <TextInput
+        placeholder="Title"
         value={title}
         onChangeText={setTitle}
-        placeholder="Title"
         style={styles.input}
       />
       <TextInput
+        placeholder="Content"
         value={content}
         onChangeText={setContent}
-        placeholder="Content"
+        style={[styles.input, styles.textArea]}
         multiline
-        style={[styles.input, {height: 150}]}
+        numberOfLines={5}
       />
-      <Button title="Save Note" onPress={handleSave} />
+      <Button
+        title={existingNote ? 'Update Note' : 'Add Note'}
+        onPress={handleSave}
+      />
     </View>
   );
 };
@@ -36,12 +57,20 @@ const NoteFormScreen = ({route, navigation}: any) => {
 export default NoteFormScreen;
 
 const styles = StyleSheet.create({
-  container: {padding: 20, flex: 1, backgroundColor: '#fff'},
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 12,
     borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
   },
 });

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Note } from '../../../domain/model/Note';
-import { NotesLocalDataSource } from '../../../data/local/datasource/NotesLocalDataSource';
+import { SQLiteNotesLocalDataSource } from '/Users/yashaja/MobileDev/reactnative/learn/ChatNotesApp/src/data/local/datasource/SQLiteNotesLocalDataSource';
 
-const notesRepo = new NotesLocalDataSource();
+
+const notesRepo = new SQLiteNotesLocalDataSource();
 
 export const useNoteFormViewModel = (existingNote?: Note) => {
   const [title, setTitle] = useState(existingNote?.title || '');
