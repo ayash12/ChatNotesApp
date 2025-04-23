@@ -5,6 +5,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  TextInput,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -15,7 +16,7 @@ import { Note } from '@domain/model/Note';
 
 
 const NotesScreen = () => {
-  const { notes, loading, refresh, deleteNoteById } = useNotesViewModel();
+  const { notes, searchQuery, setSearchQuery, loading, refresh, deleteNoteById, togglePinStatus } = useNotesViewModel();
   const navigation = useNavigation<any>();
 
   const handleDelete = (id: number) => {
@@ -34,33 +35,48 @@ const NotesScreen = () => {
     );
   };
 
-  const renderItem = ({ item }: { item: Note }) => (
-    <View style={styles.noteItem}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text numberOfLines={2} style={styles.content}>
-        {item.content}
-      </Text>
+ const renderItem = ({ item }: { item: Note }) => (
+  <View style={styles.noteItem}>
+    <Text style={styles.title}>{item.title}</Text>
+    <Text numberOfLines={2} style={styles.content}>
+      {item.content}
+    </Text>
 
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.editButton]}
-          onPress={() => navigation.navigate('NoteForm', { note: item })}
-        >
-          <Text style={styles.actionText}>Edit</Text>
-        </TouchableOpacity>
+    <View style={styles.actions}>
+      <TouchableOpacity
+        style={[styles.actionButton, styles.pinButton]}
+       onPress={() => togglePinStatus(item)}
+      >
+        <Text style={styles.actionText}>
+        {item.isPinned ? 'Unpin' : 'Pin'}
+        </Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => handleDelete(item.id)}
-        >
-          <Text style={styles.actionText}>Delete</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={[styles.actionButton, styles.editButton]}
+        onPress={() => navigation.navigate('NoteForm', { note: item })}
+      >
+        <Text style={styles.actionText}>Edit</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.actionButton, styles.deleteButton]}
+        onPress={() => handleDelete(item.id)}
+      >
+        <Text style={styles.actionText}>Delete</Text>
+      </TouchableOpacity>
     </View>
-  );
+  </View>
+);
 
   return (
     <View style={styles.container}>
+       <TextInput
+        placeholder="Search notes..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        style={styles.searchInput}
+      />
       {loading && notes.length === 0 ? (
         <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
       ) : (
@@ -142,5 +158,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 16,
+  },
+  pinButton: {
+    backgroundColor: '#FFC107',
   },
 });

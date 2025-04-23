@@ -18,26 +18,27 @@ export class SQLiteNotesLocalDataSource {
         title TEXT,
         content TEXT,
         createdAt TEXT,
-        updatedAt TEXT
+        updatedAt TEXT,
+        isPinned INTEGER DEFAULT 0
       )
     `);
   }
 
   async insertNote(note: Omit<Note, 'id'>): Promise<void> {
     if (!this.db) {return;}
-    const { title, content, createdAt, updatedAt } = note;
+    const { title, content, createdAt, updatedAt, isPinned } = note;
     await this.db.executeSql(
-      'INSERT INTO notes (title, content, createdAt, updatedAt) VALUES (?, ?, ?, ?)',
-      [title, content, createdAt, updatedAt]
+      'INSERT INTO notes (title, content, createdAt, updatedAt, isPinned) VALUES (?, ?, ?, ?, ?)',
+      [title, content, createdAt, updatedAt, isPinned ? 1 : 0]
     );
   }
 
   async updateNote(note: Note): Promise<void> {
     if (!this.db) {return;}
-    const { id, title, content, updatedAt } = note;
+    const { id, title, content, updatedAt, isPinned } = note;
     await this.db.executeSql(
-      'UPDATE notes SET title = ?, content = ?, updatedAt = ? WHERE id = ?',
-      [title, content, updatedAt, id]
+      'UPDATE notes SET title = ?, content = ?, updatedAt = ?, isPinned = ? WHERE id = ?',
+      [title, content, updatedAt, isPinned ? 1 : 0, id]
     );
   }
 
@@ -48,7 +49,7 @@ export class SQLiteNotesLocalDataSource {
 
   async getAllNotes(): Promise<Note[]> {
     if (!this.db) {return [];}
-    const [results] = await this.db.executeSql('SELECT * FROM notes ORDER BY updatedAt DESC');
+    const [results] = await this.db.executeSql('SELECT * FROM notes ORDER BY isPinned DESC, updatedAt DESC');
     const notes: Note[] = [];
     for (let i = 0; i < results.rows.length; i++) {
       notes.push(results.rows.item(i));

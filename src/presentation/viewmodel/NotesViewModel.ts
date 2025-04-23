@@ -7,13 +7,20 @@ const notesRepo = new SQLiteNotesLocalDataSource();
 export const useNotesViewModel = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);  // Menambahkan state error
 
   const fetchNotes = async () => {
     try {
       setLoading(true);
       const allNotes = await notesRepo.getAllNotes();
-      setNotes(allNotes);
+      const sortedNotes = allNotes.sort((a, b) => {
+        if (a.isPinned === b.isPinned) {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        }
+        return b.isPinned ? 1 : -1;
+      });
+      setNotes(sortedNotes);
       setError(null);  // Reset error jika berhasil
     } catch (err) {
       console.error('Error fetching notes:', err);
@@ -22,6 +29,13 @@ export const useNotesViewModel = () => {
       setLoading(false);
     }
   };
+
+  const filteredNotes = notes
+  .filter(note =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
   const deleteNoteById = async (id: number) => {
     try {
@@ -33,15 +47,37 @@ export const useNotesViewModel = () => {
     }
   };
 
+  const togglePinStatus = async (note: Note) => {
+    try {
+      const updatedNote: Note = {
+        ...note,
+        isPinned: !note.isPinned,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await notesRepo.updateNote(updatedNote);
+
+      setNotes(prevNotes =>
+        prevNotes.map(n => (n.id === updatedNote.id ? updatedNote : n))
+      );
+    } catch (err) {
+      console.error('Error toggling pin status:', err);
+      setError('Failed to toggle pin status.');
+    }
+  };
+
   useEffect(() => {
     fetchNotes();
   }, []);
 
   return {
-    notes,
+    notes: filteredNotes, // ganti dari notes ke filteredNotes
+    searchQuery,
+    setSearchQuery,
     loading,
     error,  // Return error state
     deleteNoteById,
     refresh: fetchNotes,
+    togglePinStatus,
   };
 };
