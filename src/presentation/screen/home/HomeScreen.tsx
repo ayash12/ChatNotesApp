@@ -21,10 +21,16 @@ const HomeScreen = () => {
     navigation.navigate('Notes'); // Navigasi ke NotesScreen
   };
 
+  const goToChat = () => {
+    navigation.navigate('Chat'); // Navigasi ke ChatScreen
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Welcome to ChatNotes!</Text>
       <Button title="Go to Notes" onPress={goToNotes} />
+      <View style={{ height: 16 }} />
+      <Button title="Go to Chat" onPress={goToChat} />
       <View style={{ height: 16 }} />
       <Button title="Logout" onPress={handleLogout} />
     </View>

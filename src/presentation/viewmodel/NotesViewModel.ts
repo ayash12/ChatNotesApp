@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import { useEffect, useState } from 'react';
 import { Note } from '../../domain/model/Note';
 import { SQLiteNotesLocalDataSource } from '../../data/local/datasource/SQLiteNotesLocalDataSource';
@@ -69,6 +70,36 @@ export const useNotesViewModel = () => {
   useEffect(() => {
     fetchNotes();
   }, []);
+  type GroupedNotes = {
+    date: string;
+    data: Note[];
+  };
+  const groupNotesByDate = (notes: Note[]): GroupedNotes[] => {
+    const groups: { [date: string]: Note[] } = {};
+
+    notes.forEach(note => {
+      const dateKey = new Date(note.createdAt).toDateString();
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(note);
+    });
+
+    // Sort tanggal dari terbaru ke terlama
+    const sortedDates = Object.keys(groups).sort((a, b) =>
+      new Date(b).getTime() - new Date(a).getTime()
+    );
+
+    return sortedDates.map(date => ({
+      date,
+      data: groups[date].sort((a, b) => {
+        if (a.isPinned === b.isPinned) {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        }
+        return b.isPinned ? 1 : -1;
+      }),
+    }));
+  };
 
   return {
     notes: filteredNotes, // ganti dari notes ke filteredNotes
@@ -79,5 +110,6 @@ export const useNotesViewModel = () => {
     deleteNoteById,
     refresh: fetchNotes,
     togglePinStatus,
+    groupNotesByDate,
   };
 };
