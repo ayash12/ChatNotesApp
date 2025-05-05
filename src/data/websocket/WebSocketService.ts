@@ -7,7 +7,7 @@ export class WebSocketService {
   private onMessageCallback: MessageCallback | null = null;
 
   connect(userId: string, onMessage: MessageCallback) {
-    this.socket = new WebSocket('ws://192.168.1.14:8080'); // ganti IP
+    this.socket = new WebSocket('ws://192.168.1.10:8080'); // ganti IP
     this.onMessageCallback = onMessage;
 
     this.socket.onopen = () => {

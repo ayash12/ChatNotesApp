@@ -1,6 +1,7 @@
+import { useEffect, useRef, useState } from 'react';
 import { WebSocketService } from '../../data/websocket/WebSocketService';
 import { MessageEntity } from '../../domain/entity/MessageEntity';
-import { useEffect, useRef, useState } from 'react';
+import { ChatDao } from '../../data/local/database/ChatDao';
 
 export const useChatViewModel = (userId: string) => {
   const [messages, setMessages] = useState<MessageEntity[]>([]);
@@ -11,9 +12,20 @@ export const useChatViewModel = (userId: string) => {
     const socketService = new WebSocketService();
     socketServiceRef.current = socketService;
 
-    socketService.connect(userId, (msg) => {
+     // Load riwayat chat user dari SQLite
+    const loadChatHistory = async () => {
+      const history = await ChatDao.getMessagesForUser(userId);
+      setMessages(history);
+    };
+
+    loadChatHistory();
+
+    // Koneksi WebSocket dan simpan pesan masuk
+    socketService.connect(userId, async (msg) => {
       setMessages((prev) => [...prev, msg]);
+      await ChatDao.saveMessage(msg);
     });
+
 
     setConnected(true);
 
@@ -31,6 +43,7 @@ export const useChatViewModel = (userId: string) => {
     };
     socketServiceRef.current?.sendMessage(message);
     setMessages((prev) => [...prev, message]); // tampilkan pesan sendiri
+    ChatDao.saveMessage(message); // simpan ke SQLite
   };
 
   return {
