@@ -1,97 +1,89 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 📱 ChatNotes App
 
-# Getting Started
+ChatNotes is a lightweight mobile app that combines **real-time chat** and **personal note-taking**. Built with **React Native + TypeScript** using **Clean Architecture (MVVM)**, this app is designed to be modular, maintainable, and scalable.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## ✨ Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- 🔐 Login with Firebase Authentication  
+- 💬 Lightweight real-time chat via WebSocket  
+- 📝 Personal notes stored locally  
+- 📥 Chat history saved offline using SQLite  
+- 🔔 Push notifications with Firebase Cloud Messaging (FCM)  
+- 🧠 Clean Architecture with MVVM separation  
+- ✅ Unit test support for ViewModels and services  
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
-npm start
+## 🧱 Technology Stack
 
-# OR using Yarn
-yarn start
+| Layer         | Technology                                     |
+|---------------|------------------------------------------------|
+| UI            | React Native (TypeScript)                      |
+| Architecture  | Clean Architecture (MVVM)                      |
+| Authentication| Firebase Auth                                  |
+| Chat          | WebSocket (custom client)                      |
+| Local Storage | SQLite (`react-native-sqlite-storage`)         |
+| Notifications | Firebase Cloud Messaging                       |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ayash12/chatnotes-app.git
+cd chatnotes-app
 ```
 
-## Step 2: Build and run your app
+### 2. Install Dependencies
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm install
 ```
 
-### iOS
+### 3. Link Native Modules
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+npx pod-install
 ```
 
-Then, and every time you update your native dependencies, run:
+### 4. Run on Android
 
-```sh
-bundle exec pod install
+```bash
+npx react-native run-android
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### 5. Run on iOS
 
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+```bash
+npx react-native run-ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 🔧 Firebase Setup
 
-## Step 3: Modify your app
+- Add `google-services.json` to `android/app/`
+- Add `GoogleService-Info.plist` to `ios/`
+- Enable Firebase Authentication and Firebase Cloud Messaging on the Firebase Console
 
-Now that you have successfully run the app, let's make changes!
+---
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 📦 Core Dependencies
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+- `firebase`
+- `@react-navigation/native`
+- `react-native-sqlite-storage`
+- `react-native-push-notification`
+- `react-native-gesture-handler`
+- `react-native-safe-area-context`
+- `react-native-reanimated`
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
+## 📄 License
 
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+MIT License © 2025 - Ayash Abdus Syahiid
