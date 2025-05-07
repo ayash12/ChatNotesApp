@@ -1,40 +1,65 @@
-/* eslint-disable react-native/no-inline-styles */
-import { useChatViewModel } from '../../viewmodel/ChatViewModel';
 import React, { useState } from 'react';
-import { View, TextInput, Button, FlatList, Text } from 'react-native';
+import { View, TextInput, Button, FlatList, Text, StyleSheet } from 'react-native';
+import { useChatViewModel } from '../../viewmodel/ChatViewModel';
+import auth from '@react-native-firebase/auth';
 
 const ChatScreen = () => {
-  const userId = 'user123'; // ganti dengan real UID
-  const { connected, messages, sendMessage } = useChatViewModel(userId);
+  const userId = auth().currentUser?.uid || 'unknown';
+  const { messages, sendMessage, connected } = useChatViewModel(userId);
+
   const [text, setText] = useState('');
+  const [toUserId, setToUserId] = useState('');
+
+  const handleSend = () => {
+    if (text.trim() && toUserId.trim()) {
+      sendMessage(text, toUserId);
+      setText('');
+    }
+  };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text>Status: {connected ? 'Connected' : 'Disconnected'}</Text>
+    <View style={styles.container}>
+      <Text style={styles.status}>
+        {connected ? '🟢 Connected' : '🔴 Disconnected'}
+      </Text>
 
       <FlatList
-        style={{ flex: 1, marginVertical: 10 }}
         data={messages}
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={{ marginVertical: 4 }}>
-            <Text><Text style={{ fontWeight: 'bold' }}>{item.from}:</Text> {item.text}</Text>
-          </View>
+          <Text style={styles.message}>
+            <Text style={styles.from}>{item.from === userId ? 'You' : item.from}:</Text> {item.text}
+          </Text>
         )}
       />
 
       <TextInput
+        placeholder="Recipient userId"
+        value={toUserId}
+        onChangeText={setToUserId}
+        style={styles.input}
+      />
+
+      <TextInput
+        placeholder="Type your message"
         value={text}
         onChangeText={setText}
-        placeholder="Type a message"
-        style={{ borderWidth: 1, borderColor: '#aaa', padding: 10, marginBottom: 10 }}
+        style={styles.input}
       />
-      <Button title="Send" onPress={() => {
-        sendMessage(text);
-        setText('');
-      }} />
+
+      <Button title="Send" onPress={handleSend} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16 },
+  input: {
+    borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 10, marginVertical: 6,
+  },
+  message: { paddingVertical: 4 },
+  from: { fontWeight: 'bold' },
+  status: { marginBottom: 8 },
+});
 
 export default ChatScreen;

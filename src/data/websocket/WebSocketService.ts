@@ -12,6 +12,7 @@ export class WebSocketService {
 
     this.socket.onopen = () => {
       console.log('WebSocket connected');
+      this.socket?.send(JSON.stringify({ type: 'register', userId })); // 🔑 Registrasi ke server
     };
 
     this.socket.onmessage = (event) => {

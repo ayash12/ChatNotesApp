@@ -3,7 +3,7 @@ import { WebSocketService } from '../../data/websocket/WebSocketService';
 import { MessageEntity } from '../../domain/entity/MessageEntity';
 import { ChatDao } from '../../data/local/database/ChatDao';
 
-export const useChatViewModel = (userId: string) => {
+export const useChatViewModel = (userId: string, recipientId: string) => {
   const [messages, setMessages] = useState<MessageEntity[]>([]);
   const [connected, setConnected] = useState(false);
   const socketServiceRef = useRef<WebSocketService | null>(null);
@@ -12,20 +12,24 @@ export const useChatViewModel = (userId: string) => {
     const socketService = new WebSocketService();
     socketServiceRef.current = socketService;
 
-     // Load riwayat chat user dari SQLite
+    // 🔹 Load history
     const loadChatHistory = async () => {
-      const history = await ChatDao.getMessagesForUser(userId);
+      const history = await ChatDao.getMessagesWithUser(userId, recipientId);
       setMessages(history);
     };
 
     loadChatHistory();
 
-    // Koneksi WebSocket dan simpan pesan masuk
+    // 🔹 Connect WebSocket
     socketService.connect(userId, async (msg) => {
-      setMessages((prev) => [...prev, msg]);
-      await ChatDao.saveMessage(msg);
+      if (
+        (msg.from === userId && msg.to === recipientId) ||
+        (msg.from === recipientId && msg.to === userId)
+      ) {
+        setMessages((prev) => [...prev, msg]);
+        await ChatDao.saveMessage(msg);
+      }
     });
-
 
     setConnected(true);
 
@@ -33,17 +37,18 @@ export const useChatViewModel = (userId: string) => {
       socketService.disconnect();
       setConnected(false);
     };
-  }, [userId]);
+  }, [userId, recipientId]);
 
   const sendMessage = (text: string) => {
     const message: MessageEntity = {
       from: userId,
+      to: recipientId,
       text,
       timestamp: Date.now(),
     };
     socketServiceRef.current?.sendMessage(message);
-    setMessages((prev) => [...prev, message]); // tampilkan pesan sendiri
-    ChatDao.saveMessage(message); // simpan ke SQLite
+    setMessages((prev) => [...prev, message]);
+    ChatDao.saveMessage(message);
   };
 
   return {
@@ -52,3 +57,4 @@ export const useChatViewModel = (userId: string) => {
     sendMessage,
   };
 };
+
